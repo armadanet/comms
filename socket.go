@@ -94,6 +94,7 @@ func (s *socket) writeroutine() {
   defer func() {
     ticker.Stop()
     s.conn.Close()
+    signal.Stop(interrupt)
   }()
   for {
     select {
