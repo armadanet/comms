@@ -32,7 +32,7 @@ func NewSocket(conn *websocket.Conn) Socket {
     conn: conn,
     reader: make(chan interface{}),
     writer: make(chan interface{}),
-    quit: make(chan interface{})
+    quit: make(chan interface{}),
   }
   go s.readroutine()
   go s.writeroutine()
@@ -86,6 +86,8 @@ func (s *socket) readroutine() {
 
 func (s *socket) writeroutine() {
   ticker := time.NewTicker(PingPeriod)
+  interrupt := make(chan os.Signal, 1)
+  signal.Notify(interrupt, os.Interrupt)
   defer func() {
     ticker.Stop()
     s.conn.Close()
@@ -110,6 +112,16 @@ func (s *socket) writeroutine() {
         log.Println(err)
         return
       }
+    case <- interrupt:
+      err := conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+      if err != nil {
+        log.Println(err)
+        return
+      }
+      select {
+      case <- time.After(4*time.Second):
+      }
+      return
     }
   }
 }
