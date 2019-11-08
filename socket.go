@@ -2,8 +2,11 @@ package comms
 
 import (
   "github.com/gorilla/websocket"
+  "net/http"
   "time"
   "log"
+  "os"
+  "os/signal"
 )
 
 const (
@@ -40,7 +43,7 @@ func NewSocket(conn *websocket.Conn) Socket {
 }
 
 func EstablishSocket(dialurl string) (Socket, error) {
-  conn, _, err := websocket.DefaultDialer.Dial(dailurl, nil)
+  conn, _, err := websocket.DefaultDialer.Dial(dialurl, nil)
   if err != nil {
     return nil, err
   }
@@ -61,7 +64,7 @@ func AcceptSocket(w http.ResponseWriter, r *http.Request) (Socket, error) {
 
 func (s *socket) Reader() chan interface{} {return s.reader}
 func (s *socket) Writer() chan interface{} {return s.writer}
-func (s *socket) Close() {close(quit)}
+func (s *socket) Close() {close(s.quit)}
 
 func (s *socket) readroutine() {
   defer func() {
