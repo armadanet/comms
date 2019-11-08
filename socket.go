@@ -73,7 +73,7 @@ func (s *socket) readroutine() {
   s.conn.SetReadLimit(MessageSize)
   s.conn.SetReadDeadline(time.Now().Add(PongWait))
   s.conn.SetPongHandler(func(string) error {
-    c.conn.SetReadDeadline(time.Now().Add(PongWait))
+    s.conn.SetReadDeadline(time.Now().Add(PongWait))
     return nil
   })
   for {
@@ -116,7 +116,7 @@ func (s *socket) writeroutine() {
         return
       }
     case <- interrupt:
-      err := conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+      err := s.conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
       if err != nil {
         log.Println(err)
         return
