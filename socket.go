@@ -63,7 +63,7 @@ func AcceptSocket(w http.ResponseWriter, r *http.Request) (Socket, error) {
 }
 
 func (s *socket) Start(read interface{}) {
-  go s.readroutine(reflect.TypeOf(hey))
+  go s.readroutine(reflect.TypeOf(read))
   go s.writeroutine()
 }
 func (s *socket) Reader() chan interface{} {return s.reader}
@@ -87,7 +87,7 @@ func (s *socket) readroutine(t reflect.Type) {
       log.Println(err)
       return
     }
-    s.reader <- *v
+    s.reader <- v
   }
 }
 
