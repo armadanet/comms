@@ -7,6 +7,7 @@ import (
   "log"
   "os"
   "os/signal"
+  "reflect"
 )
 
 const (
@@ -20,6 +21,7 @@ const (
 type Socket interface {
   Reader()  chan(interface{})
   Writer()  chan(interface{})
+  Start(read interface{})
   Close()
 }
 
@@ -37,8 +39,6 @@ func NewSocket(conn *websocket.Conn) Socket {
     writer: make(chan interface{}),
     quit: make(chan interface{}),
   }
-  go s.readroutine()
-  go s.writeroutine()
   return s
 }
 
@@ -62,11 +62,15 @@ func AcceptSocket(w http.ResponseWriter, r *http.Request) (Socket, error) {
   return NewSocket(conn), nil
 }
 
+func (s *socket) Start(read interface{}) {
+  go s.readroutine(reflect.TypeOf(hey))
+  go s.writeroutine()
+}
 func (s *socket) Reader() chan interface{} {return s.reader}
 func (s *socket) Writer() chan interface{} {return s.writer}
 func (s *socket) Close() {close(s.quit)}
 
-func (s *socket) readroutine() {
+func (s *socket) readroutine(t reflect.Type) {
   defer func() {
     s.conn.Close()
   }()
@@ -77,13 +81,13 @@ func (s *socket) readroutine() {
     return nil
   })
   for {
-    var v interface{}
-    err := s.conn.ReadJSON(&v)
+    v := reflect.New(t).Interface()
+    err := s.conn.ReadJSON(v)
     if err != nil {
       log.Println(err)
       return
     }
-    s.reader <- v
+    s.reader <- *v
   }
 }
 
