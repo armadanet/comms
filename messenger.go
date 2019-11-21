@@ -69,5 +69,6 @@ func (m *Messenger) run() {
         mes.Success <- true
       }
       mes.Success <- false
+    }
   }
 }
