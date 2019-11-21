@@ -57,7 +57,7 @@ func (m *Messenger) run() {
   for {
     select {
     case instance := <- m.Register:
-      m.instances[*instance.Id] = Instance
+      m.instances[*instance.Id] = instance
     case instance := <- m.Unregister:
       // delete idempotent
       delete(m.instances, *instance.Id)
