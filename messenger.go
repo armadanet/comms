@@ -2,14 +2,13 @@ package comms
 
 import (
   "github.com/google/uuid"
-  "reflect"
 )
 
 type Instance struct {
   Id        *uuid.UUID
   Reciever  chan interface{}
 }
-type InstancePool map[uuid.UUID]Instance
+type InstancePool map[uuid.UUID]*Instance
 type Message struct {
   Success   chan bool
   Reciever  *uuid.UUID
