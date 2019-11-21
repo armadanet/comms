@@ -30,7 +30,7 @@ func NewMessenger() *Messenger{
     Register: make(chan *Instance),
     Unregister: make(chan *Instance),
     UnregisterId: make(chan *uuid.UUID),
-    Message: make(chan *Message)
+    Message: make(chan *Message),
   }
 }
 
