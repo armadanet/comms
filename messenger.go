@@ -68,8 +68,7 @@ func (m *Messenger) run() {
           instance.Reciever <- mes.Data
           mes.Success <- true
         }()
-      }
-      go func() {mes.Success <- false}()
+      } else {go func() {mes.Success <- false}()}
     }
   }
 }
