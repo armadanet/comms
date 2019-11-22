@@ -64,10 +64,12 @@ func (m *Messenger) run() {
       delete(m.instances, *id)
     case mes := <- m.Message:
       if instance, ok := m.instances[*mes.Reciever]; ok {
-        instance.Reciever <- mes.Data
-        mes.Success <- true
+        go func() {
+          instance.Reciever <- mes.Data
+          mes.Success <- true
+        }()
       }
-      mes.Success <- false
+      go func() {mes.Success <- false}()
     }
   }
 }
