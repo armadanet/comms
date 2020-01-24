@@ -1,2 +1,4 @@
 # communication
-Standard Communication Channels 
+Standard Communication Channels
+
+## Use
