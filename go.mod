@@ -1,3 +1,3 @@
-module github.com/armadanet/comms/v0
+module github.com/armadanet/comms
 
 go 1.13
